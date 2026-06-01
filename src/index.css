@@ -52,6 +52,12 @@ body {
   align-items: center;
 }
 
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 .header-title {
   text-decoration: none;
   color: inherit;
@@ -351,6 +357,33 @@ body {
   border-radius: var(--radius);
   margin-bottom: 1rem;
   font-size: 0.875rem;
+}
+
+/* Login */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: var(--bg-color);
+}
+
+.login-card {
+  background-color: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 2rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-card h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: var(--primary-color);
 }
 
 /* Responsive */

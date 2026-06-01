@@ -1,10 +1,13 @@
 import { Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 import Header from './components/Header';
 import AddressList from './components/AddressList';
 import AddressForm from './components/AddressForm';
+import LoginPage from './components/LoginPage';
+import { ProtectedRoute } from './components/ProtectedRoute';
 import { useAddresses } from './hooks/useAddresses';
 
-function App() {
+function ProtectedApp() {
   const {
     addresses,
     loading,
@@ -24,7 +27,7 @@ function App() {
   };
 
   return (
-    <div className="app">
+    <>
       <Header />
       <main className="main-content">
         <Routes>
@@ -49,7 +52,27 @@ function App() {
           />
         </Routes>
       </main>
-    </div>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <div className="app">
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/*"
+            element={
+              <ProtectedRoute>
+                <ProtectedApp />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </div>
+    </AuthProvider>
   );
 }
 

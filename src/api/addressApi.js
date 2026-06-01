@@ -1,4 +1,13 @@
+import { supabase } from '../lib/supabase';
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
+async function getAuthHeaders() {
+  const { data: { session } } = await supabase.auth.getSession();
+  return session
+    ? { Authorization: `Bearer ${session.access_token}`, 'Content-Type': 'application/json' }
+    : { 'Content-Type': 'application/json' };
+}
 
 async function handleResponse(response) {
   if (!response.ok) {
@@ -12,21 +21,23 @@ async function handleResponse(response) {
 }
 
 export async function getAllAddresses() {
-  const response = await fetch(`${API_BASE_URL}/api/address`);
+  const response = await fetch(`${API_BASE_URL}/api/address`, {
+    headers: await getAuthHeaders(),
+  });
   return handleResponse(response);
 }
 
 export async function getAddressById(id) {
-  const response = await fetch(`${API_BASE_URL}/api/address/${id}`);
+  const response = await fetch(`${API_BASE_URL}/api/address/${id}`, {
+    headers: await getAuthHeaders(),
+  });
   return handleResponse(response);
 }
 
 export async function createAddress(address) {
   const response = await fetch(`${API_BASE_URL}/api/address`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: await getAuthHeaders(),
     body: JSON.stringify(address),
   });
   return handleResponse(response);
@@ -35,9 +46,7 @@ export async function createAddress(address) {
 export async function updateAddress(id, address) {
   const response = await fetch(`${API_BASE_URL}/api/address/${id}`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: await getAuthHeaders(),
     body: JSON.stringify(address),
   });
   return handleResponse(response);
@@ -46,6 +55,7 @@ export async function updateAddress(id, address) {
 export async function deleteAddress(id) {
   const response = await fetch(`${API_BASE_URL}/api/address/${id}`, {
     method: 'DELETE',
+    headers: await getAuthHeaders(),
   });
   return handleResponse(response);
 }

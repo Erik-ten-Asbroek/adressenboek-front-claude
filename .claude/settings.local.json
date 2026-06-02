@@ -13,7 +13,8 @@
       "Bash(python -c \"import sys,json,base64; d=json.load\\(sys.stdin\\); print\\(base64.b64decode\\(d['content']\\).decode\\(\\)\\)\")",
       "Bash(vercel env *)",
       "Bash(vercel link *)",
-      "Bash(vercel --prod)"
+      "Bash(vercel --prod)",
+      "Bash(npm install *)"
     ]
   }
 }

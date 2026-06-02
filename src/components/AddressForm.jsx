@@ -25,7 +25,7 @@ export function AddressForm({ onSubmit, getAddress }) {
           if (address) {
             setFormData({
               street: address.street || '',
-              housenumber: address.housenumber || '',
+              housenumber: address.housenumber != null ? String(address.housenumber) : '',
               addition: address.addition || '',
               postalcode: address.postalcode || '',
               city: address.city || '',

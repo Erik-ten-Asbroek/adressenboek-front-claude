@@ -7,6 +7,15 @@ import {
   deleteAddress,
 } from './addressApi';
 
+// Prevent supabase.js from calling createClient() with undefined env vars
+vi.mock('../lib/supabase', () => ({
+  supabase: {
+    auth: {
+      getSession: vi.fn().mockResolvedValue({ data: { session: null } }),
+    },
+  },
+}));
+
 const mockFetch = vi.fn();
 vi.stubGlobal('fetch', mockFetch);
 
@@ -17,6 +26,9 @@ function okResponse(data, status = 200) {
 function errorResponse(data, status) {
   return { ok: false, status, json: () => Promise.resolve(data) };
 }
+
+// When unauthenticated, getAuthHeaders() returns only Content-Type
+const defaultHeaders = { 'Content-Type': 'application/json' };
 
 describe('addressApi', () => {
   beforeEach(() => {
@@ -30,7 +42,10 @@ describe('addressApi', () => {
 
       const result = await getAllAddresses();
 
-      expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/api/address'));
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('/api/address'),
+        expect.objectContaining({ headers: defaultHeaders }),
+      );
       expect(result).toEqual(addresses);
     });
 
@@ -48,7 +63,10 @@ describe('addressApi', () => {
 
       const result = await getAddressById(42);
 
-      expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/api/address/42'));
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('/api/address/42'),
+        expect.objectContaining({ headers: defaultHeaders }),
+      );
       expect(result).toEqual(address);
     });
   });
@@ -65,7 +83,7 @@ describe('addressApi', () => {
         expect.stringContaining('/api/address'),
         expect.objectContaining({
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: defaultHeaders,
           body: JSON.stringify(payload),
         }),
       );

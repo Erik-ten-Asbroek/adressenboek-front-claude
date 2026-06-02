@@ -22,6 +22,25 @@ const mockAddresses = [
 ];
 
 test.beforeEach(async ({ page }) => {
+  // Inject a fake Supabase session so ProtectedRoute renders the app instead
+  // of redirecting to /login. Overriding localStorage.getItem catches any
+  // sb-*-auth-token key regardless of the exact format supabase-js uses.
+  await page.addInitScript(() => {
+    const fakeSession = JSON.stringify({
+      access_token: 'mock-access-token',
+      refresh_token: 'mock-refresh-token',
+      expires_at: Math.floor(Date.now() / 1000) + 3600,
+      expires_in: 3600,
+      token_type: 'bearer',
+      user: { id: 'mock-user-id', email: 'test@test.com', role: 'authenticated', aud: 'authenticated' },
+    });
+    const original = Storage.prototype.getItem;
+    Storage.prototype.getItem = function (key) {
+      if (key.startsWith('sb-') && key.endsWith('-auth-token')) return fakeSession;
+      return original.call(this, key);
+    };
+  });
+
   await page.route('**/api/address', async (route) => {
     const method = route.request().method();
     if (method === 'GET') {

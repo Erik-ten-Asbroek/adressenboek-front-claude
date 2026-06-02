@@ -1,0 +1,156 @@
+import { test, expect } from '@playwright/test';
+
+const mockAddresses = [
+  {
+    id: 1,
+    street: 'Main St',
+    housenumber: '42',
+    addition: '',
+    postalcode: '1234AB',
+    city: 'Amsterdam',
+    country: 'Netherlands',
+  },
+  {
+    id: 2,
+    street: 'Elm St',
+    housenumber: '7',
+    addition: 'B',
+    postalcode: '3000BB',
+    city: 'Rotterdam',
+    country: 'Netherlands',
+  },
+];
+
+test.beforeEach(async ({ page }) => {
+  await page.route('**/api/address', async (route) => {
+    const method = route.request().method();
+    if (method === 'GET') {
+      await route.fulfill({ json: mockAddresses });
+    } else if (method === 'POST') {
+      const body = route.request().postDataJSON();
+      await route.fulfill({ status: 201, json: { id: 3, ...body } });
+    } else {
+      await route.continue();
+    }
+  });
+
+  await page.route('**/api/address/*', async (route) => {
+    const method = route.request().method();
+    const url = route.request().url();
+    const id = parseInt(url.split('/').pop(), 10);
+    const address = mockAddresses.find((a) => a.id === id) ?? null;
+
+    if (method === 'GET') {
+      await route.fulfill({ json: address, status: address ? 200 : 404 });
+    } else if (method === 'PUT') {
+      const body = route.request().postDataJSON();
+      await route.fulfill({ json: { ...address, ...body } });
+    } else if (method === 'DELETE') {
+      await route.fulfill({ status: 204, body: '' });
+    } else {
+      await route.continue();
+    }
+  });
+
+  await page.goto('/');
+});
+
+test('shows all addresses on the home page', async ({ page }) => {
+  await expect(page.getByText('Main St 42')).toBeVisible();
+  await expect(page.getByText('Elm St 7 B')).toBeVisible();
+});
+
+test('can search addresses by street', async ({ page }) => {
+  await page.getByPlaceholder('Search contacts...').fill('Main');
+
+  await expect(page.getByText('Main St 42')).toBeVisible();
+  await expect(page.getByText('Elm St 7 B')).not.toBeVisible();
+});
+
+test('clear button resets search and shows all addresses', async ({ page }) => {
+  await page.getByPlaceholder('Search contacts...').fill('Main');
+  await page.getByLabel('Clear search').click();
+
+  await expect(page.getByText('Elm St 7 B')).toBeVisible();
+});
+
+test('navigates to add form when clicking + Add Address', async ({ page }) => {
+  await page.getByRole('link', { name: /\+ Add Address/i }).click();
+
+  await expect(page).toHaveURL('/add');
+  await expect(page.getByRole('heading', { name: 'Add Address' })).toBeVisible();
+});
+
+test('shows validation error when street is whitespace-only', async ({ page }) => {
+  // Filling with spaces passes HTML required validation but fails the JS trim check
+  await page.getByRole('link', { name: /\+ Add Address/i }).click();
+  await page.getByLabel('Street *').fill('   ');
+  await page.getByLabel('Number *').fill('   ');
+  await page.getByRole('button', { name: 'Add Address' }).click();
+
+  await expect(page.getByText('Street and house number are required')).toBeVisible();
+});
+
+test('can add a new address and return to home', async ({ page }) => {
+  await page.getByRole('link', { name: /\+ Add Address/i }).click();
+
+  await page.getByLabel('Street *').fill('New St');
+  await page.getByLabel('Number *').fill('99');
+  await page.getByLabel('City').fill('Utrecht');
+  await page.getByRole('button', { name: 'Add Address' }).click();
+
+  await expect(page).toHaveURL('/');
+});
+
+test('cancel on add form returns to home without submitting', async ({ page }) => {
+  await page.getByRole('link', { name: /\+ Add Address/i }).click();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
+  await expect(page).toHaveURL('/');
+});
+
+test('clicking an address card navigates to edit form with pre-filled data', async ({ page }) => {
+  await page.getByText('Main St 42').click();
+
+  await expect(page).toHaveURL('/edit/1');
+  await expect(page.getByRole('heading', { name: 'Edit Address' })).toBeVisible();
+  await expect(page.getByLabel('Street *')).toHaveValue('Main St');
+  await expect(page.getByLabel('Number *')).toHaveValue('42');
+});
+
+test('can save edits and return to home', async ({ page }) => {
+  await page.getByText('Main St 42').click();
+  await expect(page.getByLabel('Street *')).toHaveValue('Main St');
+
+  await page.getByLabel('City').fill('Utrecht');
+  await page.getByRole('button', { name: 'Update' }).click();
+
+  await expect(page).toHaveURL('/');
+});
+
+test('can delete an address after confirming the dialog', async ({ page }) => {
+  page.on('dialog', (dialog) => dialog.accept());
+
+  const deleteRequest = page.waitForRequest(
+    (req) => req.url().includes('/api/address/') && req.method() === 'DELETE',
+  );
+
+  await page.getByLabel('Delete address').first().click();
+  await deleteRequest;
+});
+
+test('does not delete when user dismisses the confirmation dialog', async ({ page }) => {
+  page.on('dialog', (dialog) => dialog.dismiss());
+
+  let deleteCalled = false;
+  page.on('request', (req) => {
+    if (req.url().includes('/api/address/') && req.method() === 'DELETE') {
+      deleteCalled = true;
+    }
+  });
+
+  await page.getByLabel('Delete address').first().click();
+  await page.waitForTimeout(300);
+
+  expect(deleteCalled).toBe(false);
+});

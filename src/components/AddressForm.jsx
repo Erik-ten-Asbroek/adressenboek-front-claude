@@ -17,6 +17,8 @@ export function AddressForm({ onSubmit, getAddress }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const isNederland = formData.country.trim().toLowerCase() === 'nederland';
+
   useEffect(() => {
     if (isEditing && getAddress) {
       setLoading(true);
@@ -48,8 +50,16 @@ export function AddressForm({ onSubmit, getAddress }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.street.trim() || !formData.housenumber.trim()) {
-      setError('Straat en huisnummer zijn verplicht');
+    const isNL = formData.country.trim().toLowerCase() === 'nederland';
+    const missing = [];
+    if (!formData.street.trim()) missing.push('Straat');
+    if (!formData.housenumber.trim()) missing.push('Nummer');
+    if (!formData.city.trim()) missing.push('Stad');
+    if (!formData.country.trim()) missing.push('Land');
+    if (isNL && !formData.postalcode.trim()) missing.push('Postcode');
+
+    if (missing.length > 0) {
+      setError(`Vul de verplichte velden in: ${missing.join(', ')}`);
       return;
     }
 
@@ -116,19 +126,20 @@ export function AddressForm({ onSubmit, getAddress }) {
 
       <div className="form-row">
         <div className="form-group form-group-small">
-          <label htmlFor="postalcode">Postcode</label>
+          <label htmlFor="postalcode">Postcode{isNederland ? ' *' : ''}</label>
           <input
             type="text"
             id="postalcode"
             name="postalcode"
             value={formData.postalcode}
             onChange={handleChange}
-            placeholder="12345"
+            placeholder="1234AB"
+            required={isNederland}
           />
         </div>
 
         <div className="form-group form-group-large">
-          <label htmlFor="city">Stad</label>
+          <label htmlFor="city">Stad *</label>
           <input
             type="text"
             id="city"
@@ -136,12 +147,13 @@ export function AddressForm({ onSubmit, getAddress }) {
             value={formData.city}
             onChange={handleChange}
             placeholder="Amsterdam"
+            required
           />
         </div>
       </div>
 
       <div className="form-group">
-        <label htmlFor="country">Land</label>
+        <label htmlFor="country">Land *</label>
         <input
           type="text"
           id="country"
@@ -149,6 +161,7 @@ export function AddressForm({ onSubmit, getAddress }) {
           value={formData.country}
           onChange={handleChange}
           placeholder="Nederland"
+          required
         />
       </div>
 

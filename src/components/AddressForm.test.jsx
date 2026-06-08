@@ -1,6 +1,6 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import AddressForm from './AddressForm';
 
@@ -38,25 +38,20 @@ describe('AddressForm', () => {
       expect(screen.getByRole('heading', { name: 'Adres toevoegen' })).toBeInTheDocument();
     });
 
-    it('shows validation error when required fields are empty', () => {
-      const { container } = renderAddForm();
-      fireEvent.submit(container.querySelector('form'));
-      expect(screen.getByText('Straat en huisnummer zijn verplicht')).toBeInTheDocument();
-    });
-
     it('calls onSubmit with null id and navigates to / on success', async () => {
       const onSubmit = vi.fn().mockResolvedValue(undefined);
       renderAddForm({ onSubmit });
 
       await userEvent.type(screen.getByLabelText('Straat *'), 'Main St');
       await userEvent.type(screen.getByLabelText('Nummer *'), '42');
-      await userEvent.type(screen.getByLabelText('Stad'), 'Amsterdam');
+      await userEvent.type(screen.getByLabelText('Stad *'), 'Amsterdam');
+      await userEvent.type(screen.getByLabelText('Land *'), 'Duitsland');
       await userEvent.click(screen.getByRole('button', { name: 'Adres toevoegen' }));
 
       await waitFor(() => expect(onSubmit).toHaveBeenCalled());
       expect(onSubmit).toHaveBeenCalledWith(
         null,
-        expect.objectContaining({ street: 'Main St', housenumber: '42', city: 'Amsterdam' }),
+        expect.objectContaining({ street: 'Main St', housenumber: '42', city: 'Amsterdam', country: 'Duitsland' }),
       );
       await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/'));
     });
@@ -67,6 +62,8 @@ describe('AddressForm', () => {
 
       await userEvent.type(screen.getByLabelText('Straat *'), 'Main St');
       await userEvent.type(screen.getByLabelText('Nummer *'), '42');
+      await userEvent.type(screen.getByLabelText('Stad *'), 'Amsterdam');
+      await userEvent.type(screen.getByLabelText('Land *'), 'Duitsland');
       await userEvent.click(screen.getByRole('button', { name: 'Adres toevoegen' }));
 
       await waitFor(() => expect(screen.getByText('Adres opslaan mislukt')).toBeInTheDocument());
@@ -76,6 +73,51 @@ describe('AddressForm', () => {
       renderAddForm();
       await userEvent.click(screen.getByRole('button', { name: 'Annuleren' }));
       await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/'));
+    });
+  });
+
+  describe('validation', () => {
+    it('shows an error listing all missing required fields when nothing is filled in', () => {
+      const { container } = renderAddForm();
+      fireEvent.submit(container.querySelector('form'));
+      expect(screen.getByText('Vul de verplichte velden in: Straat, Nummer, Stad, Land')).toBeInTheDocument();
+    });
+
+    it('requires postcode when land is nederland', async () => {
+      const { container } = renderAddForm();
+      await userEvent.type(screen.getByLabelText('Straat *'), 'Main St');
+      await userEvent.type(screen.getByLabelText('Nummer *'), '42');
+      await userEvent.type(screen.getByLabelText('Stad *'), 'Amsterdam');
+      await userEvent.type(screen.getByLabelText('Land *'), 'Nederland');
+      fireEvent.submit(container.querySelector('form'));
+      expect(screen.getByText('Vul de verplichte velden in: Postcode')).toBeInTheDocument();
+    });
+
+    it('does not require postcode when land is not nederland', async () => {
+      const onSubmit = vi.fn().mockResolvedValue(undefined);
+      renderAddForm({ onSubmit });
+      await userEvent.type(screen.getByLabelText('Straat *'), 'Main St');
+      await userEvent.type(screen.getByLabelText('Nummer *'), '42');
+      await userEvent.type(screen.getByLabelText('Stad *'), 'Berlin');
+      await userEvent.type(screen.getByLabelText('Land *'), 'Duitsland');
+      await userEvent.click(screen.getByRole('button', { name: 'Adres toevoegen' }));
+      await waitFor(() => expect(onSubmit).toHaveBeenCalled());
+    });
+
+    it('shows postcode label with asterisk when land is nederland', async () => {
+      renderAddForm();
+      await userEvent.type(screen.getByLabelText('Land *'), 'Nederland');
+      expect(screen.getByLabelText('Postcode *')).toBeInTheDocument();
+    });
+
+    it('accepts nederland case-insensitively', async () => {
+      const { container } = renderAddForm();
+      await userEvent.type(screen.getByLabelText('Straat *'), 'Main St');
+      await userEvent.type(screen.getByLabelText('Nummer *'), '42');
+      await userEvent.type(screen.getByLabelText('Stad *'), 'Amsterdam');
+      await userEvent.type(screen.getByLabelText('Land *'), 'NEDERLAND');
+      fireEvent.submit(container.querySelector('form'));
+      expect(screen.getByText('Vul de verplichte velden in: Postcode')).toBeInTheDocument();
     });
   });
 

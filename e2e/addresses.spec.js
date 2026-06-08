@@ -149,19 +149,16 @@ test('can save edits and return to home', async ({ page }) => {
 });
 
 test('can delete an address after confirming the dialog', async ({ page }) => {
-  page.on('dialog', (dialog) => dialog.accept());
-
   const deleteRequest = page.waitForRequest(
     (req) => req.url().includes('/api/address/') && req.method() === 'DELETE',
   );
 
   await page.getByLabel('Adres verwijderen').first().click();
+  await page.getByRole('button', { name: 'Verwijderen' }).click();
   await deleteRequest;
 });
 
 test('does not delete when user dismisses the confirmation dialog', async ({ page }) => {
-  page.on('dialog', (dialog) => dialog.dismiss());
-
   let deleteCalled = false;
   page.on('request', (req) => {
     if (req.url().includes('/api/address/') && req.method() === 'DELETE') {
@@ -170,6 +167,7 @@ test('does not delete when user dismisses the confirmation dialog', async ({ pag
   });
 
   await page.getByLabel('Adres verwijderen').first().click();
+  await page.getByRole('button', { name: 'Annuleren' }).click();
   await page.waitForTimeout(300);
 
   expect(deleteCalled).toBe(false);

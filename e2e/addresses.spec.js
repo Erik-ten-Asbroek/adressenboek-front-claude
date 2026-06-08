@@ -81,50 +81,50 @@ test('shows all addresses on the home page', async ({ page }) => {
 });
 
 test('can search addresses by street', async ({ page }) => {
-  await page.getByPlaceholder('Search contacts...').fill('Main');
+  await page.getByPlaceholder('Contacten zoeken...').fill('Main');
 
   await expect(page.getByText('Main St 42')).toBeVisible();
   await expect(page.getByText('Elm St 7 B')).not.toBeVisible();
 });
 
 test('clear button resets search and shows all addresses', async ({ page }) => {
-  await page.getByPlaceholder('Search contacts...').fill('Main');
-  await page.getByLabel('Clear search').click();
+  await page.getByPlaceholder('Contacten zoeken...').fill('Main');
+  await page.getByLabel('Zoekopdracht wissen').click();
 
   await expect(page.getByText('Elm St 7 B')).toBeVisible();
 });
 
 test('navigates to add form when clicking + Add Address', async ({ page }) => {
-  await page.getByRole('link', { name: /\+ Add Address/i }).click();
+  await page.getByRole('link', { name: /\+ Adres toevoegen/i }).click();
 
   await expect(page).toHaveURL('/add');
-  await expect(page.getByRole('heading', { name: 'Add Address' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Adres toevoegen' })).toBeVisible();
 });
 
 test('shows validation error when street is whitespace-only', async ({ page }) => {
   // Filling with spaces passes HTML required validation but fails the JS trim check
-  await page.getByRole('link', { name: /\+ Add Address/i }).click();
-  await page.getByLabel('Street *').fill('   ');
-  await page.getByLabel('Number *').fill('   ');
-  await page.getByRole('button', { name: 'Add Address' }).click();
+  await page.getByRole('link', { name: /\+ Adres toevoegen/i }).click();
+  await page.getByLabel('Straat *').fill('   ');
+  await page.getByLabel('Nummer *').fill('   ');
+  await page.getByRole('button', { name: 'Adres toevoegen' }).click();
 
-  await expect(page.getByText('Street and house number are required')).toBeVisible();
+  await expect(page.getByText('Straat en huisnummer zijn verplicht')).toBeVisible();
 });
 
 test('can add a new address and return to home', async ({ page }) => {
-  await page.getByRole('link', { name: /\+ Add Address/i }).click();
+  await page.getByRole('link', { name: /\+ Adres toevoegen/i }).click();
 
-  await page.getByLabel('Street *').fill('New St');
-  await page.getByLabel('Number *').fill('99');
-  await page.getByLabel('City').fill('Utrecht');
-  await page.getByRole('button', { name: 'Add Address' }).click();
+  await page.getByLabel('Straat *').fill('New St');
+  await page.getByLabel('Nummer *').fill('99');
+  await page.getByLabel('Stad').fill('Utrecht');
+  await page.getByRole('button', { name: 'Adres toevoegen' }).click();
 
   await expect(page).toHaveURL('/');
 });
 
 test('cancel on add form returns to home without submitting', async ({ page }) => {
-  await page.getByRole('link', { name: /\+ Add Address/i }).click();
-  await page.getByRole('button', { name: 'Cancel' }).click();
+  await page.getByRole('link', { name: /\+ Adres toevoegen/i }).click();
+  await page.getByRole('button', { name: 'Annuleren' }).click();
 
   await expect(page).toHaveURL('/');
 });
@@ -133,17 +133,17 @@ test('clicking an address card navigates to edit form with pre-filled data', asy
   await page.getByText('Main St 42').click();
 
   await expect(page).toHaveURL('/edit/1');
-  await expect(page.getByRole('heading', { name: 'Edit Address' })).toBeVisible();
-  await expect(page.getByLabel('Street *')).toHaveValue('Main St');
-  await expect(page.getByLabel('Number *')).toHaveValue('42');
+  await expect(page.getByRole('heading', { name: 'Adres bewerken' })).toBeVisible();
+  await expect(page.getByLabel('Straat *')).toHaveValue('Main St');
+  await expect(page.getByLabel('Nummer *')).toHaveValue('42');
 });
 
 test('can save edits and return to home', async ({ page }) => {
   await page.getByText('Main St 42').click();
-  await expect(page.getByLabel('Street *')).toHaveValue('Main St');
+  await expect(page.getByLabel('Straat *')).toHaveValue('Main St');
 
-  await page.getByLabel('City').fill('Utrecht');
-  await page.getByRole('button', { name: 'Update' }).click();
+  await page.getByLabel('Stad').fill('Utrecht');
+  await page.getByRole('button', { name: 'Bijwerken' }).click();
 
   await expect(page).toHaveURL('/');
 });
@@ -155,7 +155,7 @@ test('can delete an address after confirming the dialog', async ({ page }) => {
     (req) => req.url().includes('/api/address/') && req.method() === 'DELETE',
   );
 
-  await page.getByLabel('Delete address').first().click();
+  await page.getByLabel('Adres verwijderen').first().click();
   await deleteRequest;
 });
 
@@ -169,7 +169,7 @@ test('does not delete when user dismisses the confirmation dialog', async ({ pag
     }
   });
 
-  await page.getByLabel('Delete address').first().click();
+  await page.getByLabel('Adres verwijderen').first().click();
   await page.waitForTimeout(300);
 
   expect(deleteCalled).toBe(false);

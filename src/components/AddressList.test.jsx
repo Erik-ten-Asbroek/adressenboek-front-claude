@@ -30,12 +30,12 @@ function renderList({
 describe('AddressList', () => {
   it('shows loading spinner while fetching', () => {
     renderList({ loading: true });
-    expect(screen.getByText('Loading addresses...')).toBeInTheDocument();
+    expect(screen.getByText('Adressen laden...')).toBeInTheDocument();
   });
 
   it('shows empty state when there are no addresses', () => {
     renderList({ addressList: [], searchAddresses: () => [] });
-    expect(screen.getByText('No addresses yet.')).toBeInTheDocument();
+    expect(screen.getByText('Nog geen adressen.')).toBeInTheDocument();
   });
 
   it('renders a card for each address', () => {
@@ -46,7 +46,7 @@ describe('AddressList', () => {
 
   it('shows no-match message when search yields no results', () => {
     renderList({ searchAddresses: () => [] });
-    expect(screen.getByText('No addresses match your search.')).toBeInTheDocument();
+    expect(screen.getByText('Geen adressen gevonden voor je zoekopdracht.')).toBeInTheDocument();
   });
 
   it('filters displayed cards as the user types in the search bar', async () => {

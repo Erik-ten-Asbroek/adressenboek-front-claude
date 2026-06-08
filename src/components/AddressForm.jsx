@@ -32,10 +32,10 @@ export function AddressForm({ onSubmit, getAddress }) {
               country: address.country || ''
             });
           } else {
-            setError('Address not found');
+            setError('Adres niet gevonden');
           }
         })
-        .catch(() => setError('Failed to load address'))
+        .catch(() => setError('Adres laden mislukt'))
         .finally(() => setLoading(false));
     }
   }, [id, isEditing, getAddress]);
@@ -49,7 +49,7 @@ export function AddressForm({ onSubmit, getAddress }) {
     e.preventDefault();
 
     if (!formData.street.trim() || !formData.housenumber.trim()) {
-      setError('Street and house number are required');
+      setError('Straat en huisnummer zijn verplicht');
       return;
     }
 
@@ -58,38 +58,38 @@ export function AddressForm({ onSubmit, getAddress }) {
       await onSubmit(isEditing ? id : null, formData);
       navigate('/');
     } catch (err) {
-      setError('Failed to save address');
+      setError('Adres opslaan mislukt');
     } finally {
       setLoading(false);
     }
   };
 
   if (loading && isEditing) {
-    return <div className="loading">Loading address...</div>;
+    return <div className="loading">Adres laden...</div>;
   }
 
   return (
     <form onSubmit={handleSubmit} className="address-form">
-      <h2>{isEditing ? 'Edit Address' : 'Add Address'}</h2>
+      <h2>{isEditing ? 'Adres bewerken' : 'Adres toevoegen'}</h2>
 
       {error && <div className="error-message">{error}</div>}
 
       <div className="form-row">
         <div className="form-group form-group-large">
-          <label htmlFor="street">Street *</label>
+          <label htmlFor="street">Straat *</label>
           <input
             type="text"
             id="street"
             name="street"
             value={formData.street}
             onChange={handleChange}
-            placeholder="Main Street"
+            placeholder="Hoofdstraat"
             required
           />
         </div>
 
         <div className="form-group form-group-small">
-          <label htmlFor="housenumber">Number *</label>
+          <label htmlFor="housenumber">Nummer *</label>
           <input
             type="text"
             id="housenumber"
@@ -102,7 +102,7 @@ export function AddressForm({ onSubmit, getAddress }) {
         </div>
 
         <div className="form-group form-group-small">
-          <label htmlFor="addition">Addition</label>
+          <label htmlFor="addition">Toevoeging</label>
           <input
             type="text"
             id="addition"
@@ -116,7 +116,7 @@ export function AddressForm({ onSubmit, getAddress }) {
 
       <div className="form-row">
         <div className="form-group form-group-small">
-          <label htmlFor="postalcode">Postal Code</label>
+          <label htmlFor="postalcode">Postcode</label>
           <input
             type="text"
             id="postalcode"
@@ -128,7 +128,7 @@ export function AddressForm({ onSubmit, getAddress }) {
         </div>
 
         <div className="form-group form-group-large">
-          <label htmlFor="city">City</label>
+          <label htmlFor="city">Stad</label>
           <input
             type="text"
             id="city"
@@ -141,23 +141,23 @@ export function AddressForm({ onSubmit, getAddress }) {
       </div>
 
       <div className="form-group">
-        <label htmlFor="country">Country</label>
+        <label htmlFor="country">Land</label>
         <input
           type="text"
           id="country"
           name="country"
           value={formData.country}
           onChange={handleChange}
-          placeholder="Netherlands"
+          placeholder="Nederland"
         />
       </div>
 
       <div className="form-actions">
         <button type="button" onClick={() => navigate('/')} className="btn btn-secondary">
-          Cancel
+          Annuleren
         </button>
         <button type="submit" disabled={loading} className="btn btn-primary">
-          {loading ? 'Saving...' : (isEditing ? 'Update' : 'Add Address')}
+          {loading ? 'Opslaan...' : (isEditing ? 'Bijwerken' : 'Adres toevoegen')}
         </button>
       </div>
     </form>

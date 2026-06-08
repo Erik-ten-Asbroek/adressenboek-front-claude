@@ -35,23 +35,23 @@ describe('AddressForm', () => {
   describe('add mode', () => {
     it('renders the add form heading', () => {
       renderAddForm();
-      expect(screen.getByRole('heading', { name: 'Add Address' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Adres toevoegen' })).toBeInTheDocument();
     });
 
     it('shows validation error when required fields are empty', () => {
       const { container } = renderAddForm();
       fireEvent.submit(container.querySelector('form'));
-      expect(screen.getByText('Street and house number are required')).toBeInTheDocument();
+      expect(screen.getByText('Straat en huisnummer zijn verplicht')).toBeInTheDocument();
     });
 
     it('calls onSubmit with null id and navigates to / on success', async () => {
       const onSubmit = vi.fn().mockResolvedValue(undefined);
       renderAddForm({ onSubmit });
 
-      await userEvent.type(screen.getByLabelText('Street *'), 'Main St');
-      await userEvent.type(screen.getByLabelText('Number *'), '42');
-      await userEvent.type(screen.getByLabelText('City'), 'Amsterdam');
-      await userEvent.click(screen.getByRole('button', { name: 'Add Address' }));
+      await userEvent.type(screen.getByLabelText('Straat *'), 'Main St');
+      await userEvent.type(screen.getByLabelText('Nummer *'), '42');
+      await userEvent.type(screen.getByLabelText('Stad'), 'Amsterdam');
+      await userEvent.click(screen.getByRole('button', { name: 'Adres toevoegen' }));
 
       await waitFor(() => expect(onSubmit).toHaveBeenCalled());
       expect(onSubmit).toHaveBeenCalledWith(
@@ -65,16 +65,16 @@ describe('AddressForm', () => {
       const onSubmit = vi.fn().mockRejectedValue(new Error('Save failed'));
       renderAddForm({ onSubmit });
 
-      await userEvent.type(screen.getByLabelText('Street *'), 'Main St');
-      await userEvent.type(screen.getByLabelText('Number *'), '42');
-      await userEvent.click(screen.getByRole('button', { name: 'Add Address' }));
+      await userEvent.type(screen.getByLabelText('Straat *'), 'Main St');
+      await userEvent.type(screen.getByLabelText('Nummer *'), '42');
+      await userEvent.click(screen.getByRole('button', { name: 'Adres toevoegen' }));
 
-      await waitFor(() => expect(screen.getByText('Failed to save address')).toBeInTheDocument());
+      await waitFor(() => expect(screen.getByText('Adres opslaan mislukt')).toBeInTheDocument());
     });
 
     it('navigates to / when Cancel is clicked', async () => {
       renderAddForm();
-      await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+      await userEvent.click(screen.getByRole('button', { name: 'Annuleren' }));
       await waitFor(() => expect(screen.getByTestId('location')).toHaveTextContent('/'));
     });
   });
@@ -93,7 +93,7 @@ describe('AddressForm', () => {
     it('renders the edit form heading after loading', async () => {
       const getAddress = vi.fn().mockResolvedValue(existingAddress);
       renderEditForm({ getAddress });
-      await waitFor(() => expect(screen.getByText('Edit Address')).toBeInTheDocument());
+      await waitFor(() => expect(screen.getByText('Adres bewerken')).toBeInTheDocument());
     });
 
     it('pre-fills inputs with the existing address data', async () => {
@@ -112,7 +112,7 @@ describe('AddressForm', () => {
       renderEditForm({ getAddress, onSubmit });
 
       await waitFor(() => expect(screen.getByDisplayValue('Old St')).toBeInTheDocument());
-      await userEvent.click(screen.getByRole('button', { name: 'Update' }));
+      await userEvent.click(screen.getByRole('button', { name: 'Bijwerken' }));
 
       await waitFor(() =>
         expect(onSubmit).toHaveBeenCalledWith('1', expect.objectContaining({ street: 'Old St' })),
@@ -124,7 +124,7 @@ describe('AddressForm', () => {
       renderEditForm({ getAddress });
 
       await waitFor(() =>
-        expect(screen.getByText('Failed to load address')).toBeInTheDocument(),
+        expect(screen.getByText('Adres laden mislukt')).toBeInTheDocument(),
       );
     });
   });

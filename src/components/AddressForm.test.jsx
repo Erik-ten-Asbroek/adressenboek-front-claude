@@ -45,7 +45,7 @@ describe('AddressForm', () => {
       await userEvent.type(screen.getByLabelText('Straat *'), 'Main St');
       await userEvent.type(screen.getByLabelText('Nummer *'), '42');
       await userEvent.type(screen.getByLabelText('Stad *'), 'Amsterdam');
-      await userEvent.type(screen.getByLabelText('Land *'), 'Duitsland');
+      await userEvent.selectOptions(screen.getByLabelText('Land *'), 'Duitsland');
       await userEvent.click(screen.getByRole('button', { name: 'Adres toevoegen' }));
 
       await waitFor(() => expect(onSubmit).toHaveBeenCalled());
@@ -63,7 +63,7 @@ describe('AddressForm', () => {
       await userEvent.type(screen.getByLabelText('Straat *'), 'Main St');
       await userEvent.type(screen.getByLabelText('Nummer *'), '42');
       await userEvent.type(screen.getByLabelText('Stad *'), 'Amsterdam');
-      await userEvent.type(screen.getByLabelText('Land *'), 'Duitsland');
+      await userEvent.selectOptions(screen.getByLabelText('Land *'), 'Duitsland');
       await userEvent.click(screen.getByRole('button', { name: 'Adres toevoegen' }));
 
       await waitFor(() => expect(screen.getByText('Adres opslaan mislukt')).toBeInTheDocument());
@@ -88,7 +88,7 @@ describe('AddressForm', () => {
       await userEvent.type(screen.getByLabelText('Straat *'), 'Main St');
       await userEvent.type(screen.getByLabelText('Nummer *'), '42');
       await userEvent.type(screen.getByLabelText('Stad *'), 'Amsterdam');
-      await userEvent.type(screen.getByLabelText('Land *'), 'Nederland');
+      await userEvent.selectOptions(screen.getByLabelText('Land *'), 'Nederland');
       fireEvent.submit(container.querySelector('form'));
       expect(screen.getByText('Vul de verplichte velden in: Postcode')).toBeInTheDocument();
     });
@@ -99,25 +99,15 @@ describe('AddressForm', () => {
       await userEvent.type(screen.getByLabelText('Straat *'), 'Main St');
       await userEvent.type(screen.getByLabelText('Nummer *'), '42');
       await userEvent.type(screen.getByLabelText('Stad *'), 'Berlin');
-      await userEvent.type(screen.getByLabelText('Land *'), 'Duitsland');
+      await userEvent.selectOptions(screen.getByLabelText('Land *'), 'Duitsland');
       await userEvent.click(screen.getByRole('button', { name: 'Adres toevoegen' }));
       await waitFor(() => expect(onSubmit).toHaveBeenCalled());
     });
 
     it('shows postcode label with asterisk when land is nederland', async () => {
       renderAddForm();
-      await userEvent.type(screen.getByLabelText('Land *'), 'Nederland');
+      await userEvent.selectOptions(screen.getByLabelText('Land *'), 'Nederland');
       expect(screen.getByLabelText('Postcode *')).toBeInTheDocument();
-    });
-
-    it('accepts nederland case-insensitively', async () => {
-      const { container } = renderAddForm();
-      await userEvent.type(screen.getByLabelText('Straat *'), 'Main St');
-      await userEvent.type(screen.getByLabelText('Nummer *'), '42');
-      await userEvent.type(screen.getByLabelText('Stad *'), 'Amsterdam');
-      await userEvent.type(screen.getByLabelText('Land *'), 'NEDERLAND');
-      fireEvent.submit(container.querySelector('form'));
-      expect(screen.getByText('Vul de verplichte velden in: Postcode')).toBeInTheDocument();
     });
   });
 
@@ -129,7 +119,7 @@ describe('AddressForm', () => {
       addition: 'A',
       postalcode: '1234AB',
       city: 'Amsterdam',
-      country: 'Netherlands',
+      country: 'Nederland',
     };
 
     it('renders the edit form heading after loading', async () => {

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import AddressCard from './AddressCard';
 
@@ -61,12 +61,12 @@ describe('AddressCard', () => {
   });
 
   describe('delete', () => {
-    beforeEach(() => {
-      vi.spyOn(window, 'confirm').mockReturnValue(true);
-    });
+    it('shows a confirmation dialog when the delete button is clicked', async () => {
+      renderCard();
 
-    afterEach(() => {
-      vi.restoreAllMocks();
+      await userEvent.click(screen.getByLabelText('Adres verwijderen'));
+
+      expect(screen.getByText('Dit adres verwijderen?')).toBeInTheDocument();
     });
 
     it('calls onDelete with the address id when user confirms', async () => {
@@ -74,18 +74,28 @@ describe('AddressCard', () => {
       renderCard({}, onDelete);
 
       await userEvent.click(screen.getByLabelText('Adres verwijderen'));
+      await userEvent.click(screen.getByRole('button', { name: 'Verwijderen' }));
 
       expect(onDelete).toHaveBeenCalledWith(1);
     });
 
     it('does not call onDelete when user cancels the confirmation', async () => {
-      window.confirm.mockReturnValue(false);
       const onDelete = vi.fn();
       renderCard({}, onDelete);
 
       await userEvent.click(screen.getByLabelText('Adres verwijderen'));
+      await userEvent.click(screen.getByRole('button', { name: 'Annuleren' }));
 
       expect(onDelete).not.toHaveBeenCalled();
+    });
+
+    it('closes the dialog after cancelling', async () => {
+      renderCard();
+
+      await userEvent.click(screen.getByLabelText('Adres verwijderen'));
+      await userEvent.click(screen.getByRole('button', { name: 'Annuleren' }));
+
+      expect(screen.queryByText('Dit adres verwijderen?')).not.toBeInTheDocument();
     });
   });
 });

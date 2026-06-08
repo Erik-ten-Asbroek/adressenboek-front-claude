@@ -386,6 +386,58 @@ body {
   color: var(--primary-color);
 }
 
+/* Confirm Dialog */
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 1rem;
+}
+
+.dialog {
+  background-color: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 360px;
+}
+
+.dialog-message {
+  font-size: 1rem;
+  color: var(--text-color);
+  margin-bottom: 1.5rem;
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.btn-dialog-cancel {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+.btn-dialog-cancel:hover {
+  background-color: var(--border-color);
+}
+
+.btn-dialog-confirm {
+  background-color: var(--danger-color);
+  color: white;
+}
+
+.btn-dialog-confirm:hover {
+  background-color: var(--danger-hover);
+}
+
 /* Responsive */
 @media (max-width: 480px) {
   .header-content {

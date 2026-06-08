@@ -102,13 +102,16 @@ test('navigates to add form when clicking + Add Address', async ({ page }) => {
 });
 
 test('shows validation error when street is whitespace-only', async ({ page }) => {
-  // Filling with spaces passes HTML required validation but fails the JS trim check
+  // Filling with spaces passes HTML required validation but fails the JS trim check.
+  // Stadt and Land must be filled so browser HTML validation doesn't block the submit.
   await page.getByRole('link', { name: /\+ Adres toevoegen/i }).click();
   await page.getByLabel('Straat *').fill('   ');
   await page.getByLabel('Nummer *').fill('   ');
+  await page.getByLabel('Stad *').fill('Amsterdam');
+  await page.getByLabel('Land *').fill('Duitsland');
   await page.getByRole('button', { name: 'Adres toevoegen' }).click();
 
-  await expect(page.getByText('Straat en huisnummer zijn verplicht')).toBeVisible();
+  await expect(page.getByText('Vul de verplichte velden in: Straat, Nummer')).toBeVisible();
 });
 
 test('can add a new address and return to home', async ({ page }) => {
@@ -116,7 +119,8 @@ test('can add a new address and return to home', async ({ page }) => {
 
   await page.getByLabel('Straat *').fill('New St');
   await page.getByLabel('Nummer *').fill('99');
-  await page.getByLabel('Stad').fill('Utrecht');
+  await page.getByLabel('Stad *').fill('Utrecht');
+  await page.getByLabel('Land *').fill('Duitsland');
   await page.getByRole('button', { name: 'Adres toevoegen' }).click();
 
   await expect(page).toHaveURL('/');
@@ -142,7 +146,7 @@ test('can save edits and return to home', async ({ page }) => {
   await page.getByText('Main St 42').click();
   await expect(page.getByLabel('Straat *')).toHaveValue('Main St');
 
-  await page.getByLabel('Stad').fill('Utrecht');
+  await page.getByLabel('Stad *').fill('Utrecht');
   await page.getByRole('button', { name: 'Bijwerken' }).click();
 
   await expect(page).toHaveURL('/');

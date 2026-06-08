@@ -70,6 +70,7 @@ test.beforeEach(async ({ page }) => {
       await route.continue();
     }
   });
+  page.setDefaultTimeout(3000);
 
   await page.goto('/');
 });

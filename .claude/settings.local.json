@@ -14,7 +14,8 @@
       "Bash(vercel env *)",
       "Bash(vercel link *)",
       "Bash(vercel --prod)",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "Bash(npm run *)"
     ]
   }
 }

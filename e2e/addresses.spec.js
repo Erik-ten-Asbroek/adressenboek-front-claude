@@ -154,7 +154,7 @@ test('can delete an address after confirming the dialog', async ({ page }) => {
   );
 
   await page.getByLabel('Adres verwijderen').first().click();
-  await page.getByRole('button', { name: 'Verwijderen' }).click();
+  await page.getByRole('button', { name: 'Verwijderen', exact: true }).click();
   await deleteRequest;
 });
 

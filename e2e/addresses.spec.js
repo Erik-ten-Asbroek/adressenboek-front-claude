@@ -8,7 +8,7 @@ const mockAddresses = [
     addition: '',
     postalcode: '1234AB',
     city: 'Amsterdam',
-    country: 'Netherlands',
+    country: 'Nederland',
   },
   {
     id: 2,
@@ -17,7 +17,7 @@ const mockAddresses = [
     addition: 'B',
     postalcode: '3000BB',
     city: 'Rotterdam',
-    country: 'Netherlands',
+    country: 'Nederland',
   },
 ];
 
@@ -108,7 +108,7 @@ test('shows validation error when street is whitespace-only', async ({ page }) =
   await page.getByLabel('Straat *').fill('   ');
   await page.getByLabel('Nummer *').fill('   ');
   await page.getByLabel('Stad *').fill('Amsterdam');
-  await page.getByLabel('Land *').fill('Duitsland');
+  await page.getByLabel('Land *').selectOption('Duitsland');
   await page.getByRole('button', { name: 'Adres toevoegen' }).click();
 
   await expect(page.getByText('Vul de verplichte velden in: Straat, Nummer')).toBeVisible();
@@ -120,7 +120,7 @@ test('can add a new address and return to home', async ({ page }) => {
   await page.getByLabel('Straat *').fill('New St');
   await page.getByLabel('Nummer *').fill('99');
   await page.getByLabel('Stad *').fill('Utrecht');
-  await page.getByLabel('Land *').fill('Duitsland');
+  await page.getByLabel('Land *').selectOption('Duitsland');
   await page.getByRole('button', { name: 'Adres toevoegen' }).click();
 
   await expect(page).toHaveURL('/');

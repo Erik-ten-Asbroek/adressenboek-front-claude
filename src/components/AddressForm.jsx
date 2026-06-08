@@ -154,15 +154,22 @@ export function AddressForm({ onSubmit, getAddress }) {
 
       <div className="form-group">
         <label htmlFor="country">Land *</label>
-        <input
-          type="text"
+        <select
           id="country"
           name="country"
           value={formData.country}
           onChange={handleChange}
-          placeholder="Nederland"
           required
-        />
+        >
+          <option value="">-- Selecteer land --</option>
+          <option value="Nederland">Nederland</option>
+          <option value="Engeland">Engeland</option>
+          <option value="Duitsland">Duitsland</option>
+          <option value="Frankrijk">Frankrijk</option>
+          <option value="Amerika">Amerika</option>
+          <option value="Belgie">Belgie</option>
+          <option value="Luxemburg">Luxemburg</option>
+        </select>
       </div>
 
       <div className="form-actions">

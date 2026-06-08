@@ -12,7 +12,7 @@ export function AddressCard({ address, onDelete }) {
   const handleDelete = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (window.confirm(`Delete this address?`)) {
+    if (window.confirm(`Dit adres verwijderen?`)) {
       onDelete(address.id);
     }
   };
@@ -26,7 +26,7 @@ export function AddressCard({ address, onDelete }) {
           </svg>
         </div>
         <div className="address-info">
-          <h3 className="address-street">{displayText || 'No street'}</h3>
+          <h3 className="address-street">{displayText || 'Geen straat'}</h3>
           {cityLine && <p className="address-detail">{cityLine}</p>}
           {address.country && <p className="address-detail">{address.country}</p>}
         </div>
@@ -35,7 +35,7 @@ export function AddressCard({ address, onDelete }) {
         type="button"
         onClick={handleDelete}
         className="btn-delete"
-        aria-label="Delete address"
+        aria-label="Adres verwijderen"
       >
         &times;
       </button>

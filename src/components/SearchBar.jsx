@@ -3,7 +3,7 @@ export function SearchBar({ value, onChange }) {
     <div className="search-bar">
       <input
         type="text"
-        placeholder="Search contacts..."
+        placeholder="Contacten zoeken..."
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="search-input"
@@ -13,7 +13,7 @@ export function SearchBar({ value, onChange }) {
           type="button"
           onClick={() => onChange('')}
           className="search-clear"
-          aria-label="Clear search"
+          aria-label="Zoekopdracht wissen"
         >
           &times;
         </button>

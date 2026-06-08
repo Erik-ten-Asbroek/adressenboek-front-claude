@@ -10,21 +10,21 @@ export function Header() {
     <header className="header">
       <div className="header-content">
         <Link to="/" className="header-title">
-          <h1>Address Book</h1>
+          <h1>Adressenboek</h1>
         </Link>
         <div className="header-actions">
           {isHome && (
             <Link to="/add" className="btn btn-primary">
-              + Add Address
+              + Adres toevoegen
             </Link>
           )}
           {!isHome && (
             <Link to="/" className="btn btn-secondary">
-              Back
+              Terug
             </Link>
           )}
           <button onClick={logout} className="btn btn-secondary">
-            Sign out
+            Uitloggen
           </button>
         </div>
       </div>

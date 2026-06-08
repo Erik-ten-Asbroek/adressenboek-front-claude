@@ -26,11 +26,11 @@ export function LoginPage() {
   return (
     <div className="login-container">
       <div className="login-card">
-        <h2>Address Book</h2>
+        <h2>Adressenboek</h2>
         <form onSubmit={handleSubmit}>
           {error && <div className="error-message">{error}</div>}
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">E-mail</label>
             <input
               id="email"
               type="email"
@@ -41,7 +41,7 @@ export function LoginPage() {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">Wachtwoord</label>
             <input
               id="password"
               type="password"
@@ -53,7 +53,7 @@ export function LoginPage() {
           </div>
           <div className="form-actions">
             <button type="submit" className="btn btn-primary" disabled={loading}>
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? 'Inloggen...' : 'Inloggen'}
             </button>
           </div>
         </form>

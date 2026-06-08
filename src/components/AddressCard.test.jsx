@@ -34,9 +34,9 @@ describe('AddressCard', () => {
       expect(screen.getByText('Main St 42')).toBeInTheDocument();
     });
 
-    it('shows "No street" when street, housenumber and addition are absent', () => {
+    it('shows "Geen straat" when street, housenumber and addition are absent', () => {
       renderCard({ street: '', housenumber: '', addition: '' });
-      expect(screen.getByText('No street')).toBeInTheDocument();
+      expect(screen.getByText('Geen straat')).toBeInTheDocument();
     });
 
     it('shows postal code and city on the city line', () => {
@@ -73,7 +73,7 @@ describe('AddressCard', () => {
       const onDelete = vi.fn();
       renderCard({}, onDelete);
 
-      await userEvent.click(screen.getByLabelText('Delete address'));
+      await userEvent.click(screen.getByLabelText('Adres verwijderen'));
 
       expect(onDelete).toHaveBeenCalledWith(1);
     });
@@ -83,7 +83,7 @@ describe('AddressCard', () => {
       const onDelete = vi.fn();
       renderCard({}, onDelete);
 
-      await userEvent.click(screen.getByLabelText('Delete address'));
+      await userEvent.click(screen.getByLabelText('Adres verwijderen'));
 
       expect(onDelete).not.toHaveBeenCalled();
     });

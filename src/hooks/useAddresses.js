@@ -19,7 +19,7 @@ export function useAddresses() {
       setAddresses(data || []);
       setError(null);
     } catch (err) {
-      setError('Failed to load addresses');
+      setError('Adressen laden mislukt');
       console.error('Error loading addresses:', err);
     } finally {
       setLoading(false);
@@ -36,7 +36,7 @@ export function useAddresses() {
       await loadAddresses();
       return newAddress;
     } catch (err) {
-      setError('Failed to add address');
+      setError('Adres toevoegen mislukt');
       console.error('Error adding address:', err);
       throw err;
     }
@@ -47,7 +47,7 @@ export function useAddresses() {
       await updateAddress(id, updates);
       await loadAddresses();
     } catch (err) {
-      setError('Failed to update address');
+      setError('Adres bijwerken mislukt');
       console.error('Error updating address:', err);
       throw err;
     }
@@ -58,7 +58,7 @@ export function useAddresses() {
       await deleteAddress(id);
       await loadAddresses();
     } catch (err) {
-      setError('Failed to delete address');
+      setError('Adres verwijderen mislukt');
       console.error('Error deleting address:', err);
       throw err;
     }
@@ -68,7 +68,7 @@ export function useAddresses() {
     try {
       return await getAddressById(id);
     } catch (err) {
-      setError('Failed to get address');
+      setError('Adres ophalen mislukt');
       console.error('Error getting address:', err);
       throw err;
     }

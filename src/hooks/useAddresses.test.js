@@ -41,7 +41,7 @@ describe('useAddresses', () => {
 
     await waitFor(() => expect(result.current.loading).toBe(false));
 
-    expect(result.current.error).toBe('Failed to load addresses');
+    expect(result.current.error).toBe('Adressen laden mislukt');
     expect(result.current.addresses).toEqual([]);
   });
 

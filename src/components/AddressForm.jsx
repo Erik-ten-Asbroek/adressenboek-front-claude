@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+const COUNTRIES = ['Nederland', 'Engeland', 'Duitsland', 'Frankrijk', 'Amerika', 'Belgie', 'Luxemburg'];
+
+function normalizeCountry(value) {
+  if (!value) return '';
+  return COUNTRIES.find(c => c.toLowerCase() === value.trim().toLowerCase()) ?? '';
+}
+
 export function AddressForm({ onSubmit, getAddress }) {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -31,7 +38,7 @@ export function AddressForm({ onSubmit, getAddress }) {
               addition: address.addition || '',
               postalcode: address.postalcode || '',
               city: address.city || '',
-              country: address.country || ''
+              country: normalizeCountry(address.country)
             });
           } else {
             setError('Adres niet gevonden');
